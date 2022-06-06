@@ -5,20 +5,18 @@ const API_KEY = '27573462-7cfd1b03d2f186a851a1b1b26';
 
 const BASIC_URL = 'https://pixabay.com/api/';
 
-let inputValue = '';
-
 const options = {
   key: API_KEY,
-  q: `${inputValue}`,
+  //   q: inputValue,
   image_type: 'photo',
-  orientation: 'horizontal',
+  orientation: 'vertical',
   safesearch: 'true',
 };
 
 const { key, q, image_type, orientation, safesearch } = options;
 
 const Refs = {
-  inputValue: document.querySelector('input[name="searchQuery"]'),
+  inputValueRef: document.querySelector('input[name="searchQuery"]'),
   searchBtn: document.querySelector('.submitBtn'),
   galleryRef: document.querySelector('.gallery'),
   loadMoreBtn: document.querySelector('.load-more'),
@@ -27,22 +25,32 @@ Refs.searchBtn.addEventListener('click', onClick);
 
 async function onClick(e) {
   e.preventDefault();
-  inputValue = e.target.value.trim();
+  let inputValue = Refs.inputValueRef.value.trim();
+  console.log(options.image_type);
+  if (inputValue === '') {
+    Notiflix.Report.warning('Sorry', 'Search field, cannot be empty', 'Okay', {
+      messageFontSize: '20px',
+      messageMaxLength: 1923,
+      plainText: false,
+    });
+  } else {
+    try {
+      const response = await axios
+        .get(
+          `${BASIC_URL}?key=${options.key}&q='cat'&${options.image_type}&${options.orientation}&${options.safesearch}`,
+        )
+        .then(({ data }) => {
+          console.log(data);
+          return data.hits;
+        })
+        .then(result => {
+          console.log(result);
 
-  try {
-    const response = await axios
-      .get(`${BASIC_URL}?key=${key}&${q}&${image_type}&${orientation}&${safesearch}`)
-      .then(({ data }) => {
-        console.log(data);
-        return data.hits;
-      })
-      .then(result => {
-        console.log(result);
-
-        Refs.galleryRef.innerHTML = createCard(result);
-      });
-  } catch (error) {
-    console.error(error);
+          Refs.galleryRef.innerHTML = createCard(result);
+        });
+    } catch (error) {
+      console.error(error);
+    }
   }
 }
 
