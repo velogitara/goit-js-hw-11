@@ -38,7 +38,7 @@ async function onClick(e) {
     try {
       const response = await axios
         .get(
-          `${BASIC_URL}?key=${API_KEY}&q='${inputValue}'&image_type=${image_type}&orientation=${orientation}&safesearch=${safesearch}`,
+          `${BASIC_URL}?key=${API_KEY}&q='${inputValue}'&image_type=${image_type}&orientation=${orientation}&safesearch=${safesearch}&per_page=40`,
         )
         .then(({ data }) => {
           console.log(data);
@@ -66,19 +66,19 @@ function createCard(items) {
   return items
     .map(item => {
       return `<div class="photo-card">
-              <img src="${item.webformatURL}" alt="${item.tags}" loading="lazy" height="260px />
+              <div class="thumb"><img src="${item.webformatURL}" class="image" alt="${item.tags}" loading="lazy" /></div>
               <div class="info">
                   <p class="info-item">
-                      <b>Likes:${item.likes}</b>
+                      <b>Likes:<span class="info-item__value">${item.likes}</span></b>
                   </p>
                   <p class="info-item">
-                      <b>Views:${item.views}</b>
+                      <b>Views:<span class="info-item__value">${item.views}</span></b>
                   </p>
                   <p class="info-item">
-                      <b>Comments:${item.comments}</b>
+                      <b>Comments:<span class="info-item__value">${item.comments}</span></b>
                   </p>
                   <p class="info-item">
-                      <b>Downloads:${item.downloads}</b>
+                      <b>Downloads:<span class="info-item__value">${item.downloads}</span></b>
                   </p>
               </div>
           </div>`;

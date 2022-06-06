@@ -1,5 +1,61 @@
+img{
+    display: block;
+}
+.search-form{
+    display: flex;
+    justify-content: center;
+    background-color: rgb(34, 146, 238);
+    padding-top: 40px;
+    padding-bottom: 30px;
+    position: fixed;
+    width: 100%;
+}
+
+.galleryContainer{
+    padding-top: 130px;
+   padding-left: 50px;
+   padding-right: 50px;
+}
 .gallery{
-        display: flex;
+
+     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+     margin: -15px;
+
+}
+.photo-card{
+    flex-basis: calc((100% - 4 * 30px) / 4);
+    margin: 15px;
+    box-shadow: 1px 8px 7px 4px rgba(0,0,0,0.37);}
+
+.thumb{
+    height: 260px;
+  width: auto;
+}
+
+.image{
+    display: block;
+      height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+.info{
+    display: flex;
+    flex-direction: row;
+}
+.info-item{
+    font-size: larger;
+    
+    margin-left: auto;
+    margin-right: auto;
+}
+.info-item__value{
+    margin-top: 5px;
+    color: rgb(12, 32, 207);
+    font-size: smaller;
+display: flex;
+flex-direction: column;
+    align-items: center;
+
 }
