@@ -1,3 +1,4 @@
+import Notiflix from 'notiflix';
 const axios = require('axios').default;
 const API_KEY = '27573462-7cfd1b03d2f186a851a1b1b26';
 const BASIC_URL = 'https://pixabay.com/api/';
@@ -17,14 +18,13 @@ export default class GalleryApiService {
         `${BASIC_URL}?key=${API_KEY}&q='${this.searchQuery}'&image_type=${this.image_type}&orientation=${this.orientation}&safesearch=${this.safesearch}&per_page=40&page=${this.page}`,
       )
       .then(({ data }) => {
-        console.log(data.total);
+        console.log(data);
         return data.hits;
       });
   }
 
   loadMore() {
     this.page += 1;
-
     return this.fetchImages();
   }
 

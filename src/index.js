@@ -58,7 +58,20 @@ async function onClick(e) {
         messageMaxLength: 1923,
         plainText: false,
       });
-    } else {
+    }
+    // else if (result.length < 40) {
+    //   loadMoreBtn.hide();
+    //   Refs.galleryRef.innerHTML = createCard(result);
+    //   setTimeout(() => {
+    //     window.addEventListener(
+    //       'scroll',
+    //       Notiflix.Notify.warning('No More Pictures To Load', {
+    //         messageFontSize: '30px',
+    //       }),
+    //     );
+    //   }, 3000);
+    // }
+    else {
       loadMoreBtn.show();
       loadMoreBtn.disable();
       setTimeout(() => {
@@ -73,24 +86,19 @@ async function onClick(e) {
 
 async function onLoadMore() {
   const result = await galleryApi.loadMore();
-  console.log(result);
-  //   const result = await axios
-  //     .get(
-  //       `${BASIC_URL}?key=${API_KEY}&q='${this.searchQuery}'&image_type=${this.image_type}&orientation=${this.orientation}&safesearch=${this.safesearch}&per_page=40&page=${this.page}`,
-  //     )
-  //     .then(({ data }) => {
-  //       console.log(data.total);
-  //       return data.hits;
-  //     });
+  console.log(result.length);
+  if (result.length < 40) {
+    loadMoreBtn.hide();
+    Notiflix.Report.warning('No More Pictures To Load', 'We are very sorry');
+  } else {
+    loadMoreBtn.show();
+    loadMoreBtn.disable();
 
-  //   Notiflix.Notify.warning('No More Pictures To Load');
-  loadMoreBtn.show();
-  loadMoreBtn.disable();
-
-  setTimeout(() => {
-    Refs.galleryRef.insertAdjacentHTML('beforeend', createCard(result));
-    loadMoreBtn.enable();
-  }, 1000);
+    setTimeout(() => {
+      Refs.galleryRef.insertAdjacentHTML('beforeend', createCard(result));
+      loadMoreBtn.enable();
+    }, 1000);
+  }
 }
 
 function createCard(items) {
