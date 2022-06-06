@@ -5,11 +5,13 @@ const API_KEY = '27573462-7cfd1b03d2f186a851a1b1b26';
 
 const BASIC_URL = 'https://pixabay.com/api/';
 
+let inputValue = '';
+
 const options = {
   key: API_KEY,
-  //   q: inputValue,
+  q: `"${inputValue}"`,
   image_type: 'photo',
-  orientation: 'vertical',
+  orientation: 'horizontal',
   safesearch: 'true',
 };
 
@@ -25,7 +27,7 @@ Refs.searchBtn.addEventListener('click', onClick);
 
 async function onClick(e) {
   e.preventDefault();
-  let inputValue = Refs.inputValueRef.value.trim();
+  inputValue = Refs.inputValueRef.value.trim();
   console.log(options.image_type);
   if (inputValue === '') {
     Notiflix.Report.warning('Sorry', 'Search field, cannot be empty', 'Okay', {
@@ -37,7 +39,7 @@ async function onClick(e) {
     try {
       const response = await axios
         .get(
-          `${BASIC_URL}?key=${options.key}&q='cat'&${options.image_type}&${options.orientation}&${options.safesearch}`,
+          `${BASIC_URL}?key=${options.key}&q='${inputValue}'&${options.image_type}&${options.orientation}&${options.safesearch}`,
         )
         .then(({ data }) => {
           console.log(data);
