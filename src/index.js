@@ -9,10 +9,10 @@ let inputValue = '';
 
 const options = {
   key: API_KEY,
-  q: `"${inputValue}"`,
+  q: inputValue,
   image_type: 'photo',
   orientation: 'horizontal',
-  safesearch: 'true',
+  safesearch: true,
 };
 
 const { key, q, image_type, orientation, safesearch } = options;
@@ -28,7 +28,6 @@ Refs.searchBtn.addEventListener('click', onClick);
 async function onClick(e) {
   e.preventDefault();
   inputValue = Refs.inputValueRef.value.trim();
-  console.log(options.image_type);
   if (inputValue === '') {
     Notiflix.Report.warning('Sorry', 'Search field, cannot be empty', 'Okay', {
       messageFontSize: '20px',
@@ -39,7 +38,7 @@ async function onClick(e) {
     try {
       const response = await axios
         .get(
-          `${BASIC_URL}?key=${options.key}&q='${inputValue}'&${options.image_type}&${options.orientation}&${options.safesearch}`,
+          `${BASIC_URL}?key=${API_KEY}&q='${inputValue}'&image_type=${image_type}&orientation=${orientation}&safesearch=${safesearch}`,
         )
         .then(({ data }) => {
           console.log(data);
@@ -47,8 +46,15 @@ async function onClick(e) {
         })
         .then(result => {
           console.log(result);
-
-          Refs.galleryRef.innerHTML = createCard(result);
+          if (result.length === 0) {
+            Notiflix.Report.failure('Sorry We did not find anything', {
+              messageFontSize: '20px',
+              messageMaxLength: 1923,
+              plainText: false,
+            });
+          } else {
+            Refs.galleryRef.innerHTML = createCard(result);
+          }
         });
     } catch (error) {
       console.error(error);
