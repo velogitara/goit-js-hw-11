@@ -1,8 +1,9 @@
 import Notiflix from 'notiflix';
 import debounce from 'lodash.debounce';
-
 import GalleryApiService from './components/gallery-API-service';
 const axios = require('axios').default;
+
+import LoadMoreBtn from './components/loadMoreBtn';
 
 const API_KEY = '27573462-7cfd1b03d2f186a851a1b1b26';
 
@@ -10,30 +11,34 @@ const BASIC_URL = 'https://pixabay.com/api/';
 
 let inputValue = '';
 
-// const options = {
-//   key: API_KEY,
-//   q: inputValue,
-//   image_type: 'photo',
-//   orientation: 'horizontal',
-//   safesearch: true,
-// };
-
-// const { key, q, image_type, orientation, safesearch } = options;
-
 const Refs = {
   inputValueRef: document.querySelector('input[name="searchQuery"]'),
   searchBtn: document.querySelector('.submitBtn'),
   galleryRef: document.querySelector('.gallery'),
-  loadMoreBtn: document.querySelector('.load-more'),
+
+  //   loadMoreBtn: document.querySelector('.load-more'),
 };
 
+const loadMoreBtn = new LoadMoreBtn({
+  selector: '[data-action="load-more"]',
+  hidden: true,
+});
+
+console.log(loadMoreBtn);
+
 Refs.searchBtn.addEventListener('click', onClick);
-Refs.loadMoreBtn.addEventListener('click', onLoadMore);
+loadMoreBtn.refs.button.addEventListener('click', onLoadMore);
+// Refs.loadMoreBtn.addEventListener('click', onLoadMore);
 
 const galleryApi = new GalleryApiService();
 
 async function onClick(e) {
   e.preventDefault();
+  loadMoreBtn.hide();
+  Refs.galleryRef.innerHTML = '';
+  galleryApi.resetPage();
+  Refs.inputValueRef.addEventListener('input', enableSearchBtn);
+  Refs.searchBtn.toggleAttribute('disabled');
 
   inputValue = Refs.inputValueRef.value.trim();
 
@@ -47,6 +52,7 @@ async function onClick(e) {
     });
   } else {
     const result = await galleryApi.fetchImages();
+
     if (result.length === 0) {
       Notiflix.Report.failure('Sorry We did not find anything', {
         messageFontSize: '20px',
@@ -54,22 +60,28 @@ async function onClick(e) {
         plainText: false,
       });
     } else {
-      Refs.galleryRef.innerHTML = createCard(result);
+      loadMoreBtn.show();
+      loadMoreBtn.disable();
+      setTimeout(() => {
+        Refs.galleryRef.innerHTML = createCard(result);
+        loadMoreBtn.enable();
+      }, 1000);
+      // Refs.galleryRef.innerHTML = createCard(result);
+      // loadMoreBtn.enable()
     }
   }
 }
 
 async function onLoadMore() {
   const result = await galleryApi.loadMore();
+  //   Notiflix.Notify.warning('No More Pictures To Load');
+  loadMoreBtn.show();
+  loadMoreBtn.disable();
 
-  //   axios
-  //     .get(
-  //       `${BASIC_URL}?key=${API_KEY}&q='${inputValue}'&image_type=${image_type}&orientation=${orientation}&safesearch=${safesearch}&per_page=40`,
-  //     )
-  //     .then(({ data }) => {
-  //       console.log(data);
-  //       return data.hits;
-  //     });
+  setTimeout(() => {
+    Refs.galleryRef.insertAdjacentHTML('beforeend', createCard(result));
+    loadMoreBtn.enable();
+  }, 1000);
 }
 
 function createCard(items) {
@@ -96,33 +108,6 @@ function createCard(items) {
     .join('');
 }
 
-// return `<div>
-//         <p class="country-info__line"><img src="${item.flags.svg}" alt="${
-//         item.name.official
-//       }" width='30px' height='20px'>
-//         <span class="countryName">${item.name.official}</span></p>
-//         <p class="country-info__line"> <span class="keyName">Capital</span>: ${item.capital}</p>
-//         <p class="country-info__line"> <span class="keyName">Population</span>: ${
-//           item.population
-//         }</p>
-//         <p class="country-info__line"> <span class="keyName">languages</span>: ${Object.values(
-//           item.languages,
-//         ).join(', ')}</p>
-//     </div>`;
-//     })
-
-//   return fetch(
-//     `https://pixabay.com/api/?key=${key}&${q}&${image_type}&${orientation}&${safesearch}`
-//   )
-//     .then(response => {
-//       if (!response.ok) {
-//         throw new Error(response.status);
-//       }
-//       return response.json();
-//     })
-//     .then(data => {
-//       console.log(data);
-//     })
-//     .catch(error => {
-//       console.log(error);
-//     });
+function enableSearchBtn() {
+  Refs.searchBtn.disabled = false;
+}

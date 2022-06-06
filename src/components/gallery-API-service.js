@@ -11,20 +11,25 @@ export default class GalleryApiService {
     this.page = 1;
   }
   fetchImages() {
-    console.log(this);
+    // console.log(this);
     return axios
       .get(
         `${BASIC_URL}?key=${API_KEY}&q='${this.searchQuery}'&image_type=${this.image_type}&orientation=${this.orientation}&safesearch=${this.safesearch}&per_page=40&page=${this.page}`,
       )
       .then(({ data }) => {
-        console.log(data);
+        console.log(data.total);
         return data.hits;
       });
   }
 
   loadMore() {
     this.page += 1;
+
     return this.fetchImages();
+  }
+
+  resetPage() {
+    this.page = 1;
   }
 
   get query() {
