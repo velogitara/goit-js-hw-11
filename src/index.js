@@ -1,4 +1,7 @@
 import Notiflix from 'notiflix';
+import debounce from 'lodash.debounce';
+
+import GalleryApiService from './components/gallery-API-service';
 const axios = require('axios').default;
 
 const API_KEY = '27573462-7cfd1b03d2f186a851a1b1b26';
@@ -7,15 +10,15 @@ const BASIC_URL = 'https://pixabay.com/api/';
 
 let inputValue = '';
 
-const options = {
-  key: API_KEY,
-  q: inputValue,
-  image_type: 'photo',
-  orientation: 'horizontal',
-  safesearch: true,
-};
+// const options = {
+//   key: API_KEY,
+//   q: inputValue,
+//   image_type: 'photo',
+//   orientation: 'horizontal',
+//   safesearch: true,
+// };
 
-const { key, q, image_type, orientation, safesearch } = options;
+// const { key, q, image_type, orientation, safesearch } = options;
 
 const Refs = {
   inputValueRef: document.querySelector('input[name="searchQuery"]'),
@@ -23,11 +26,19 @@ const Refs = {
   galleryRef: document.querySelector('.gallery'),
   loadMoreBtn: document.querySelector('.load-more'),
 };
+
 Refs.searchBtn.addEventListener('click', onClick);
+Refs.loadMoreBtn.addEventListener('click', onLoadMore);
+
+const galleryApi = new GalleryApiService();
 
 async function onClick(e) {
   e.preventDefault();
+
   inputValue = Refs.inputValueRef.value.trim();
+
+  galleryApi.query = Refs.inputValueRef.value.trim();
+
   if (inputValue === '') {
     Notiflix.Report.warning('Sorry', 'Search field, cannot be empty', 'Okay', {
       messageFontSize: '20px',
@@ -35,31 +46,30 @@ async function onClick(e) {
       plainText: false,
     });
   } else {
-    try {
-      const response = await axios
-        .get(
-          `${BASIC_URL}?key=${API_KEY}&q='${inputValue}'&image_type=${image_type}&orientation=${orientation}&safesearch=${safesearch}&per_page=40`,
-        )
-        .then(({ data }) => {
-          console.log(data);
-          return data.hits;
-        })
-        .then(result => {
-          console.log(result);
-          if (result.length === 0) {
-            Notiflix.Report.failure('Sorry We did not find anything', {
-              messageFontSize: '20px',
-              messageMaxLength: 1923,
-              plainText: false,
-            });
-          } else {
-            Refs.galleryRef.innerHTML = createCard(result);
-          }
-        });
-    } catch (error) {
-      console.error(error);
+    const result = await galleryApi.fetchImages();
+    if (result.length === 0) {
+      Notiflix.Report.failure('Sorry We did not find anything', {
+        messageFontSize: '20px',
+        messageMaxLength: 1923,
+        plainText: false,
+      });
+    } else {
+      Refs.galleryRef.innerHTML = createCard(result);
     }
   }
+}
+
+async function onLoadMore() {
+  const result = await galleryApi.loadMore();
+
+  //   axios
+  //     .get(
+  //       `${BASIC_URL}?key=${API_KEY}&q='${inputValue}'&image_type=${image_type}&orientation=${orientation}&safesearch=${safesearch}&per_page=40`,
+  //     )
+  //     .then(({ data }) => {
+  //       console.log(data);
+  //       return data.hits;
+  //     });
 }
 
 function createCard(items) {
