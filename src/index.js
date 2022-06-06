@@ -1,5 +1,4 @@
 import Notiflix from 'notiflix';
-import debounce from 'lodash.debounce';
 import GalleryApiService from './components/gallery-API-service';
 const axios = require('axios').default;
 
@@ -37,11 +36,11 @@ async function onClick(e) {
   loadMoreBtn.hide();
   Refs.galleryRef.innerHTML = '';
   galleryApi.resetPage();
+
   Refs.inputValueRef.addEventListener('input', enableSearchBtn);
   Refs.searchBtn.toggleAttribute('disabled');
 
   inputValue = Refs.inputValueRef.value.trim();
-
   galleryApi.query = Refs.inputValueRef.value.trim();
 
   if (inputValue === '') {
@@ -74,6 +73,16 @@ async function onClick(e) {
 
 async function onLoadMore() {
   const result = await galleryApi.loadMore();
+  console.log(result);
+  //   const result = await axios
+  //     .get(
+  //       `${BASIC_URL}?key=${API_KEY}&q='${this.searchQuery}'&image_type=${this.image_type}&orientation=${this.orientation}&safesearch=${this.safesearch}&per_page=40&page=${this.page}`,
+  //     )
+  //     .then(({ data }) => {
+  //       console.log(data.total);
+  //       return data.hits;
+  //     });
+
   //   Notiflix.Notify.warning('No More Pictures To Load');
   loadMoreBtn.show();
   loadMoreBtn.disable();
