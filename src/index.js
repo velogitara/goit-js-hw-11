@@ -7,15 +7,13 @@ import LoadMoreBtn from './components/loadMoreBtn';
 const API_KEY = '27573462-7cfd1b03d2f186a851a1b1b26';
 
 const BASIC_URL = 'https://pixabay.com/api/';
-
 let inputValue = '';
 
 const Refs = {
   inputValueRef: document.querySelector('input[name="searchQuery"]'),
   searchBtn: document.querySelector('.submitBtn'),
   galleryRef: document.querySelector('.gallery'),
-
-  //   loadMoreBtn: document.querySelector('.load-more'),
+  backToTopBtn: document.querySelector('[data-action="back-to-top"]'),
 };
 
 const loadMoreBtn = new LoadMoreBtn({
@@ -23,64 +21,66 @@ const loadMoreBtn = new LoadMoreBtn({
   hidden: true,
 });
 
-console.log(loadMoreBtn);
-
 Refs.searchBtn.addEventListener('click', onClick);
 loadMoreBtn.refs.button.addEventListener('click', onLoadMore);
+Refs.backToTopBtn.addEventListener('click', backToTop);
 // Refs.loadMoreBtn.addEventListener('click', onLoadMore);
 
 const galleryApi = new GalleryApiService();
 
 async function onClick(e) {
-  e.preventDefault();
-  loadMoreBtn.hide();
-  Refs.galleryRef.innerHTML = '';
-  galleryApi.resetPage();
+  try {
+    e.preventDefault();
+    loadMoreBtn.hide();
+    Refs.backToTopBtn.classList.add('is-hidden');
+    Refs.galleryRef.innerHTML = '';
+    galleryApi.resetPage();
 
-  Refs.inputValueRef.addEventListener('input', enableSearchBtn);
-  Refs.searchBtn.toggleAttribute('disabled');
+    Refs.inputValueRef.addEventListener('input', enableSearchBtn);
+    Refs.searchBtn.toggleAttribute('disabled');
 
-  inputValue = Refs.inputValueRef.value.trim();
-  galleryApi.query = Refs.inputValueRef.value.trim();
+    inputValue = Refs.inputValueRef.value.trim();
+    galleryApi.query = Refs.inputValueRef.value.trim();
 
-  if (inputValue === '') {
-    Notiflix.Report.warning('Sorry', 'Search field, cannot be empty', 'Okay', {
-      messageFontSize: '20px',
-      messageMaxLength: 1923,
-      plainText: false,
-    });
-  } else {
-    const result = await galleryApi.fetchImages();
-
-    if (result.length === 0) {
-      Notiflix.Report.failure('Sorry We did not find anything', {
+    if (inputValue === '') {
+      Notiflix.Report.warning('Sorry', 'Search field, cannot be empty', 'Okay', {
         messageFontSize: '20px',
         messageMaxLength: 1923,
         plainText: false,
       });
+    } else {
+      const result = await galleryApi.fetchImages();
+
+      if (result.length === 0) {
+        Notiflix.Report.failure('Sorry We did not find anything', {
+          messageFontSize: '20px',
+          messageMaxLength: 1923,
+          plainText: false,
+        });
+      }
+      // else if (result.length < 40) {
+      //   loadMoreBtn.hide();
+      //   Refs.galleryRef.innerHTML = createCard(result);
+      //   setTimeout(() => {
+      //     window.addEventListener(
+      //       'scroll',
+      //       Notiflix.Notify.warning('No More Pictures To Load', {
+      //         messageFontSize: '30px',
+      //       }),
+      //     );
+      //   }, 3000);
+      // }
+      else {
+        loadMoreBtn.show();
+        loadMoreBtn.disable();
+        setTimeout(() => {
+          Refs.galleryRef.innerHTML = createCard(result);
+          loadMoreBtn.enable();
+        }, 1000);
+      }
     }
-    // else if (result.length < 40) {
-    //   loadMoreBtn.hide();
-    //   Refs.galleryRef.innerHTML = createCard(result);
-    //   setTimeout(() => {
-    //     window.addEventListener(
-    //       'scroll',
-    //       Notiflix.Notify.warning('No More Pictures To Load', {
-    //         messageFontSize: '30px',
-    //       }),
-    //     );
-    //   }, 3000);
-    // }
-    else {
-      loadMoreBtn.show();
-      loadMoreBtn.disable();
-      setTimeout(() => {
-        Refs.galleryRef.innerHTML = createCard(result);
-        loadMoreBtn.enable();
-      }, 1000);
-      // Refs.galleryRef.innerHTML = createCard(result);
-      // loadMoreBtn.enable()
-    }
+  } catch (error) {
+    console.log(error);
   }
 }
 
@@ -90,6 +90,7 @@ async function onLoadMore() {
   if (result.length < 40) {
     loadMoreBtn.hide();
     Notiflix.Report.warning('No More Pictures To Load', 'We are very sorry');
+    Refs.backToTopBtn.classList.remove('is-hidden');
   } else {
     loadMoreBtn.show();
     loadMoreBtn.disable();
@@ -127,4 +128,11 @@ function createCard(items) {
 
 function enableSearchBtn() {
   Refs.searchBtn.disabled = false;
+}
+
+function backToTop() {
+  if (window.pageYOffset > 0) {
+    window.scrollBy(0, -80);
+    setTimeout(backToTop, 0);
+  }
 }

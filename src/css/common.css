@@ -69,11 +69,26 @@ flex-direction: column;
   padding: 10px 40px;
 }
 
+.backToTop{
+   display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+.backToTop.is-hidden{
+  display: none;
+}
+.backToTop:hover{
+  background: #0a4bff;
+}
+
 .button {
   display: block;
   margin-left: auto;
   margin-right: auto;
   margin-top: 30px;
+  margin-bottom: 30px;
 
 }
 
@@ -86,3 +101,6 @@ flex-direction: column;
 }
 
 
+.searchInpt{
+  border-radius: 10px;
+}

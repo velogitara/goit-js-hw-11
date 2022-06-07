@@ -21,7 +21,13 @@
   </head>
   <body>
     <form class="search-form" id="search-form">
-      <input type="text" name="searchQuery" autocomplete="off" placeholder="Search images..." />
+      <input
+        type="text"
+        class="searchInpt"
+        name="searchQuery"
+        autocomplete="off"
+        placeholder="Search images..."
+      />
       <button type="submit" class="submitBtn">Search</button>
     </form>
     <div class="galleryContainer">
@@ -39,7 +45,9 @@
       <span class="label">Показать ещё</span>
     </button>
 
-    <!-- <button type="button" class="load-more" data-action="load-more">Load more</button> -->
+    <button type="button" class="btn btn-primary backToTop is-hidden" data-action="back-to-top">
+      Back to top &#9650;
+    </button>
     <script src="index.js"></script>
   </body>
 </html>
