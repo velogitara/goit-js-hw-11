@@ -89,10 +89,14 @@ async function onLoadMore() {
   const { data } = result;
   console.log(galleryApi.page);
   if (data.hits.length < 40 && galleryApi.page > 1) {
-    loadMoreBtn.hide();
-    Refs.backToTopBtn.classList.remove('is-hidden');
-    Refs.galleryRef.insertAdjacentHTML('beforeend', createCard(data.hits));
-    lightbox.refresh();
+    loadMoreBtn.disable();
+    setTimeout(() => {
+      Refs.galleryRef.insertAdjacentHTML('beforeend', createCard(data.hits));
+      lightbox.refresh();
+      console.log('лог внутри сета');
+      loadMoreBtn.hide();
+      Refs.backToTopBtn.classList.remove('is-hidden');
+    }, 1000);
 
     setTimeout(() => {
       Notiflix.Notify.warning('Мы нашли все картинки, что смогли ');
@@ -104,7 +108,7 @@ async function onLoadMore() {
     setTimeout(() => {
       Refs.galleryRef.insertAdjacentHTML('beforeend', createCard(data.hits));
       lightbox.refresh();
-
+      Refs.backToTopBtn.classList.remove('is-hidden');
       loadMoreBtn.enable();
     }, 1000);
   }

@@ -92,6 +92,7 @@ flex-direction: column;
 
 }
 
+
 .button.is-hidden {
   display: none;
 }
@@ -104,3 +105,7 @@ flex-direction: column;
 .searchInpt{
   border-radius: 10px;
 }
+
+/* .onLoadBtns{
+display: flex;
+} */
