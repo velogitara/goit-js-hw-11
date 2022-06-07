@@ -32,6 +32,7 @@ async function onClick(e) {
   try {
     e.preventDefault();
     loadMoreBtn.hide();
+
     Refs.backToTopBtn.classList.add('is-hidden');
     Refs.galleryRef.innerHTML = '';
     galleryApi.resetPage();
@@ -50,31 +51,20 @@ async function onClick(e) {
       });
     } else {
       const result = await galleryApi.fetchImages();
+      const { data } = result;
 
-      if (result.length === 0) {
+      if (data.hits.length === 0) {
         Notiflix.Report.failure('Sorry We did not find anything', {
           messageFontSize: '20px',
           messageMaxLength: 1923,
           plainText: false,
         });
-      }
-      // else if (result.length < 40) {
-      //   loadMoreBtn.hide();
-      //   Refs.galleryRef.innerHTML = createCard(result);
-      //   setTimeout(() => {
-      //     window.addEventListener(
-      //       'scroll',
-      //       Notiflix.Notify.warning('No More Pictures To Load', {
-      //         messageFontSize: '30px',
-      //       }),
-      //     );
-      //   }, 3000);
-      // }
-      else {
+      } else {
+        Notiflix.Notify.success(`Hooray! We found ${data.total} images.`);
         loadMoreBtn.show();
         loadMoreBtn.disable();
         setTimeout(() => {
-          Refs.galleryRef.innerHTML = createCard(result);
+          Refs.galleryRef.innerHTML = createCard(data.hits);
           loadMoreBtn.enable();
         }, 1000);
       }
@@ -86,17 +76,19 @@ async function onClick(e) {
 
 async function onLoadMore() {
   const result = await galleryApi.loadMore();
-  console.log(result.length);
-  if (result.length < 40) {
+  const { data } = result;
+  console.log(data.hits.length);
+  if (data.hits.length < 40) {
     loadMoreBtn.hide();
     Notiflix.Report.warning('No More Pictures To Load', 'We are very sorry');
     Refs.backToTopBtn.classList.remove('is-hidden');
+    Refs.galleryRef.insertAdjacentHTML('beforeend', createCard(data.hits));
   } else {
     loadMoreBtn.show();
     loadMoreBtn.disable();
 
     setTimeout(() => {
-      Refs.galleryRef.insertAdjacentHTML('beforeend', createCard(result));
+      Refs.galleryRef.insertAdjacentHTML('beforeend', createCard(data.hits));
       loadMoreBtn.enable();
     }, 1000);
   }

@@ -17,9 +17,9 @@ export default class GalleryApiService {
       .get(
         `${BASIC_URL}?key=${API_KEY}&q='${this.searchQuery}'&image_type=${this.image_type}&orientation=${this.orientation}&safesearch=${this.safesearch}&per_page=40&page=${this.page}`,
       )
-      .then(({ data }) => {
+      .then(data => {
         console.log(data);
-        return data.hits;
+        return data;
       });
   }
 
