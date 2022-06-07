@@ -66,7 +66,6 @@ async function onClick(e) {
         setTimeout(() => {
           Refs.galleryRef.innerHTML = createCard(data.hits);
           lightbox.refresh();
-
           loadMoreBtn.hide();
         }, 1000);
       } else {
