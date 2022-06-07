@@ -65,6 +65,8 @@ async function onClick(e) {
         loadMoreBtn.disable();
         setTimeout(() => {
           Refs.galleryRef.innerHTML = createCard(data.hits);
+          lightbox.refresh();
+
           loadMoreBtn.hide();
         }, 1000);
       } else {
@@ -91,6 +93,8 @@ async function onLoadMore() {
     loadMoreBtn.hide();
     Refs.backToTopBtn.classList.remove('is-hidden');
     Refs.galleryRef.insertAdjacentHTML('beforeend', createCard(data.hits));
+    lightbox.refresh();
+
     setTimeout(() => {
       Notiflix.Notify.warning('Мы нашли все картинки, что смогли ');
     }, 3000);
@@ -100,6 +104,8 @@ async function onLoadMore() {
 
     setTimeout(() => {
       Refs.galleryRef.insertAdjacentHTML('beforeend', createCard(data.hits));
+      lightbox.refresh();
+
       loadMoreBtn.enable();
     }, 1000);
   }
